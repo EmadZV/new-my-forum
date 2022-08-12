@@ -1,0 +1,11 @@
+<!-- templates/registration/login.html -->
+<h2>Log In</h2>
+    {% if user.is_authenticated %}
+        Your are already logged in!
+{% else %}
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Log In</button>
+</form>
+{% endif %}

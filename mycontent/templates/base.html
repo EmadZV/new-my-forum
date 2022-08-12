@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<head>
+<link href="{% static "css/mycontent.css" %}" rel="stylesheet">
+    <title>{% block title %}My amazing forum{% endblock %}</title>
+</head>
+<body>
+{% block topnav %}
+    {% if user.is_authenticated %}
+    <div class="topnav">
+  <a class="active" href="{% url "mycontent:landing_page" %}">Home</a>
+{#  <a href="#"></a>#}
+  <a href="{% url "mycontent:post_list" %}">forums</a>
+  <a href="{% url 'logout' %}" class="split">LOG OUT</a>
+  <a href="{% url "mycontent:newpost" %}" class="split">Create New Post</a>
+
+            {% else%}
+
+    <div class="topnav">
+  <a class="active" href="{% url "mycontent:landing_page" %}">Home</a>
+{#  <a href="#">News</a>#}
+{#  <a href="#">Contact</a>#}
+  <a href="{% url 'register' %}" class="split">Sign In</a>
+  <a href="{% url 'login' %}" class="split">Log In</a>
+            {% endif %}
+    </div>
+{% endblock %}
+    <div class="content">
+{% block content %}
+{% endblock %}
+    </div>
+
+</body>
