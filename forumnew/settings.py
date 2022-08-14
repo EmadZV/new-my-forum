@@ -13,9 +13,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-import accounts as accounts
+# import accounts as accounts
 
-import myauth.models
+# import myauth.models
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -42,9 +42,10 @@ INSTALLED_APPS = [
     'myauth.apps.MyauthConfig',
     'mycontent.apps.MycontentConfig',
     'phonenumber_field',
-
 ]
+
 # AUTH_USER_MODEL = 'myauth.models.UserModel'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
