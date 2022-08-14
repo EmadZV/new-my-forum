@@ -13,6 +13,7 @@
   <a href="{% url "mycontent:post_list" %}">forums</a>
   <a href="{% url 'logout' %}" class="split">LOG OUT</a>
   <a href="{% url "mycontent:newpost" %}" class="split">Create New Post</a>
+  <a class="split">{{ user.username }}</a>
 
             {% else%}
 

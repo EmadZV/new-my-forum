@@ -2,6 +2,8 @@ from django.contrib.auth.models import User
 from django.contrib.humanize.templatetags import humanize
 from django.db import models
 from django.urls import reverse
+from django.conf import settings
+
 
 # from myauth.models import UserModel
 
@@ -11,7 +13,8 @@ class PostModel(models.Model):
         ('locked', 'Locked'),
         ('open', 'Open')
     )
-    # user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_post', default=None)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_post',
+                             default=None)
     title = models.CharField(max_length=64)
     # slug = models.SlugField(max_length=250, default=None)
     body = models.TextField()

@@ -9,8 +9,10 @@
  <h2>Add a new POST</h2>
  <form method="POST">
  {% csrf_token %}
- {{ form.as_p }}
-
+ {{ form.title}}
+     {{ form.body }}
+     {{ form.image }}
+{#    <a href="{% url 'post' %}"></a>#}
  <p><input type="submit" value="Add POST"></p>
  </form>
 {% endif %}

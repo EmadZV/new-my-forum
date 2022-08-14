@@ -1,8 +1,8 @@
 # from django.contrib.auth.models import User, AbstractUser
 # from django.db import models
 # from phonenumber_field.modelfields import PhoneNumberField
-
-
+#
+#
 # class UserModel(models.Model):
 #     GENDER = (
 #         ('male', 'Male'),
