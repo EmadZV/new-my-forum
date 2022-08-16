@@ -1,5 +1,5 @@
 from django import forms
-from .models import PostModel
+from .models import PostModel, CommentModel, AnswerModel
 
 
 class PostCreateForm(forms.ModelForm):
@@ -7,4 +7,16 @@ class PostCreateForm(forms.ModelForm):
 
     class Meta:
         model = PostModel
-        fields = ('title', 'body', 'image', )
+        fields = ('title', 'body', 'image',)
+
+
+class CommentCreateForm(forms.ModelForm):
+    class Meta:
+        model = CommentModel
+        fields = ('body',)
+
+
+class AnswerCreateForm(forms.ModelForm):
+    class Meta:
+        model = CommentModel
+        fields = ('body',)

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+{% block title %}My amazing forum{% endblock %}
+{% block content%}
+    <a>{{ post }}</a>
+    <br>
+    {% if new_comment %}
+         <a>Your comment has been sent to verify</a>
+    {% else %}
+        <a>ADD COMMENT</a>
+        <form  class="answer" method="post">
+              {% csrf_token %}
+              {{ commentform.as_p }}
+              <button type="submit">ADD COMMENT</button>
+        </form>
+    {% endif %}
+
+    {% if new_answer %}
+         <a>Your answer has been sent to verify</a>
+    {% else %}
+        <a>ADD ANSWER</a>
+        <form  class="answer" method="post">
+              {% csrf_token %}
+              {{ answerform.as_p }}
+              <button type="submit">ADD ANSWER</button>
+        </form>
+
+    {% endif %}
+
+{% endblock %}

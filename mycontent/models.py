@@ -37,7 +37,7 @@ class PostModel(models.Model):
 
 
 class AnswerModel(models.Model):
-    # user = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='user_answer')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_answer', default=None)
     body = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -50,9 +50,9 @@ class AnswerModel(models.Model):
 
 
 class CommentModel(models.Model):
-    post = models.ForeignKey(PostModel, on_delete=models.CASCADE, related_name='post_comment')
+    post = models.ForeignKey(PostModel, on_delete=models.CASCADE, related_name='post_comment', )
     answer = models.ForeignKey(AnswerModel, on_delete=models.CASCADE, related_name='answer_comment')
-    # user = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='user_comment')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_comment', default=None)
     body = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
