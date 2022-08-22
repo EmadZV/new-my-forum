@@ -1,5 +1,5 @@
 from django import forms
-from .models import PostModel, CommentModel, AnswerModel
+from .models import PostModel, CommentModel, AnswerModel, TagModel
 
 
 class PostCreateForm(forms.ModelForm):
@@ -13,10 +13,16 @@ class PostCreateForm(forms.ModelForm):
 class CommentCreateForm(forms.ModelForm):
     class Meta:
         model = CommentModel
-        fields = ('body',)
+        fields = ('cbody',)
 
 
 class AnswerCreateForm(forms.ModelForm):
     class Meta:
-        model = CommentModel
-        fields = ('body',)
+        model = AnswerModel
+        fields = ('abody',)
+
+
+class TagSearchForm(forms.ModelForm):
+    class Meta:
+        model = TagModel
+        fields = ('title', )

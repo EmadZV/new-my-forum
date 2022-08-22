@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'myauth.middleware.NewMiddleware'
+    # 'myauth.middleware.NewMiddleware'
 ]
 
 ROOT_URLCONF = 'forumnew.urls'
@@ -131,3 +131,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # django_project/settings.py
 LOGIN_REDIRECT_URL = "mycontent:landing_page"
 LOGOUT_REDIRECT_URL = "mycontent:landing_page"
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

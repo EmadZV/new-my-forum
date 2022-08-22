@@ -15,7 +15,8 @@
         </tr>
             {% for post in posts %}
         <tr>
-            <td href="">{{ post.title }}</td>
+            <td> <a href="{{ post.get_absolute_url }}">{{ post.title }}</a> </td>
+            <a>---------------------- {{ post.slug }}</a>
             <td>{{ post.body }}</td>
             <td>{{ post.created }}</td>
             <td>{{ post.get_date }}</td>

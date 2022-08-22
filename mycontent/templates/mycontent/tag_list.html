@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+{% block title %}My amazing forum{% endblock %}
+{% block content %}
+        <a>Search Tags</a>
+        <form  method="post">
+              {% csrf_token %}
+              {{ form.as_p }}
+              <button type="submit">Search</button>
+        <br>
+        <table>
+                {% for tag in taglist %}
+            <tr>
+                <a href="{{ tag.get_absolute_url }}">{{ tag }}</a>
+            </tr>
+        </table>
+    {% endfor %}
+{% endblock %}

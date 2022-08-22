@@ -5,6 +5,41 @@
     <title>Title</title>
 </head>
 <body>
+<form method="POST">
+    {{ user }}
+ {% csrf_token %}
+ {{ form.as_p}}
+ <p><input type="submit" value="Add POST"></p>
+    <a>ACCEPT YOUR POST'S ANSWERS</a>
+    <table>
+    <tr>
+    <td>
+    <select>
+        {% for post in posts %}
+        <option value="{{ post }}">{{ post }}</option>
+        {% endfor %}
+    </select>
+    </td>
+    <td>
+    <select>
+        {% for option in answer %}
+        <option value="{{ option }}">{{ option }}</option>
+        {% endfor %}
+    </select>
+    </td>
+    <td>
+        <select>
+        <option value="False">Ignore</option>
+        <option value="True">Accept</option>
+        </select>
 
+    </td>
+    </tr>
+    </table>
+
+    <br><br>
+    <input type="submit" value="Submit">
+    {{ answer }}
+ </form>
 </body>
 </html>

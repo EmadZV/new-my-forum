@@ -11,19 +11,24 @@
   <a class="active" href="{% url "mycontent:landing_page" %}">Home</a>
 {#  <a href="#"></a>#}
   <a href="{% url "mycontent:post_list" %}">forums</a>
-  <a href="{% url 'logout' %}" class="split">LOG OUT</a>
+  <a href="{% url 'myauth:logout' %}" class="split">LOG OUT</a>
   <a href="{% url "mycontent:newpost" %}" class="split">Create New Post</a>
+  <a href="{% url "myauth:profile" %}" class="split">{{ user }}'s Profile</a>
+
     {% if user.lastseen %}
         <a class="split">{{ user.username }}</a>
     {% endif %}
             {% else%}
 
     <div class="topnav">
+
   <a class="active" href="{% url "mycontent:landing_page" %}">Home</a>
+  <a href="{% url "mycontent:post_list" %}">forums</a>
+
 {#  <a href="#">News</a>#}
 {#  <a href="#">Contact</a>#}
-  <a href="{% url 'register' %}" class="split">Sign In</a>
-  <a href="{% url 'login' %}" class="split">Log In</a>
+  <a href="{% url 'myauth:register' %}" class="split">Sign In</a>
+  <a href="{% url 'myauth:login' %}" class="split">Log In</a>
             {% endif %}
     </div>
 {% endblock %}

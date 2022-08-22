@@ -5,6 +5,34 @@
 {% block content%}
     <a>{{ post }}</a>
     <br>
+    <a> tags :
+        {% for tag in posttag.all %}
+           <a href="{{ tag.get_absolute_url }}"><button>{{ tag.title }}</button></a>
+            </a>
+            <br>
+        {% endfor %}
+    <br>
+
+    <a> SimilarPOSTS </a>
+    {{ similarpost }}
+    <br>
+    <table>
+    <tr>
+        <th>Comments</th>
+        <th>Time</th>
+        <th>By</th>
+    </tr>
+        {% for obj in comment %}
+    <tr>
+        <td>{{ obj.body }}</td>
+        <td>{{ obj.created }}</td>
+        <td>{{ obj.user }}</td>
+    </tr>
+     {% endfor %}
+    </table>
+
+
+    <br>
     {% if new_comment %}
          <a>Your comment has been sent to verify</a>
     {% else %}
@@ -12,10 +40,17 @@
         <form  class="answer" method="post">
               {% csrf_token %}
               {{ commentform.as_p }}
-              <button type="submit">ADD COMMENT</button>
+              <button name='comment' type="submit">ADD COMMENT</button>
         </form>
     {% endif %}
+    Answers
+    {% if answer.accepted == True %}
 
+{% for obj in answer %}
+        {{ obj.body }}
+    {% endfor %}
+{% endif %}
+    <br>
     {% if new_answer %}
          <a>Your answer has been sent to verify</a>
     {% else %}
@@ -23,7 +58,7 @@
         <form  class="answer" method="post">
               {% csrf_token %}
               {{ answerform.as_p }}
-              <button type="submit">ADD ANSWER</button>
+              <button name="answer" type="submit">ADD ANSWER</button>
         </form>
 
     {% endif %}
