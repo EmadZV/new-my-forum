@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.humanize.templatetags import humanize
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.db.models import Count
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.conf import settings
@@ -46,7 +47,7 @@ class PostModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     status = models.CharField(choices=STATUS, max_length=6, default='open')
-    image = models.ImageField()
+    image = models.ImageField(default=None)
     tag = models.ManyToManyField(TagModel, )
 
     def save(self, *args, **kwargs):
@@ -54,23 +55,7 @@ class PostModel(models.Model):
         return super().save(*args, **kwargs)
 
     def generate_slug(self, save_to_obj=False, add_random_suffix=True):
-        """
-        Generates and returns slug for this obj.
-        If `save_to_obj` is True, then saves to current obj.
-        Warning: setting `save_to_obj` to True
-              when called from `.save()` method
-              can lead to recursion error!
-
-        `add_random_suffix ` is to make sure that slug field has unique value.
-        """
-
-        # We rely on django's slugify function here. But if
-        # it is not sufficient for you needs, you can implement
-        # you own way of generating slugs.
         generated_slug = slugify(self.title)
-
-        # Generate random suffix here.
-        random_suffix = ""
         if add_random_suffix:
             random_suffix = ''.join([
                 random.choice(string.ascii_letters + string.digits)
@@ -92,6 +77,30 @@ class PostModel(models.Model):
 
     def get_date(self):
         return humanize.naturaltime(self.updated)
+
+    @property
+    def lock(self):
+        self.status = 'locked'
+        return self.save()
+
+    @property
+    def unlock(self):
+        self.status = 'open'
+        return self.save()
+
+    @property
+    def get_similar_posts(self):
+        posttag = self.tag.all()
+        post_tags_ids = self.tag.values_list('id', flat=True)
+        similar_posts = PostModel.objects.filter(tag__in=post_tags_ids).exclude(id=self.id).distinct()
+        similar_posts = similar_posts.annotate(same_tags=Count('tag')).order_by('-same_tags', '-created')
+        return similar_posts
+
+    @property
+    def get_post_netvotes(self):
+        post_upvotes = self.votemodel_set.filter(vote=True).count()
+        post_downvotes = self.votemodel_set.filter(vote=False).count()
+        return post_upvotes - post_downvotes
 
     def __str__(self):
         return self.title
@@ -118,6 +127,12 @@ class AnswerModel(models.Model):
     def __str__(self):
         return self.abody
 
+    @property
+    def get_net_answer(self):
+        answer_upvotes = self.votemodel_set.filter(vote=True).count()
+        answer_downvotes = self.votemodel_set.filter(vote=False).count()
+        return answer_upvotes - answer_downvotes
+
 
 class CommentModel(models.Model):
     post = models.ForeignKey(PostModel, on_delete=models.CASCADE, related_name='post_comment', null=True)
@@ -133,18 +148,53 @@ class CommentModel(models.Model):
     def __str__(self):
         return self.cbody
 
-# class VoteModel(models.Model):
-#     upvote = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)])
-#     downvote = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)])
-#     totalvote = models.PositiveIntegerField
-#
-#     def addvote(self):
-#
-#         def save(self, *args, **kwargs):  # new
-#             if not self.:
-#                 self.slug = slugify(self.title)
-#             return super().save(*args, **kwargs)
-#
-#         def get_absolute_url(self):
-#             return reverse('mycontent:tag_detail',
-#                            args=[self.slug])
+
+class CustomModelManager(models.Manager):
+    def create(self, *args, **kwargs):
+        # model_type, voter, vote = model_type, obj_data.get('voter'), obj_data.get('vote')
+        voter, newvote = kwargs.get('voter'), kwargs.get('vote')
+
+        # if kwargs['post']:
+        post = kwargs['post']
+        # elif kwargs['answer']:
+        answer = kwargs['answer']
+        # answer_id = obj_data['answer_id']
+        if answer:
+            myvote = VoteModel.objects.filter(voter=voter, answer=answer)
+        elif post:
+            myvote = VoteModel.objects.filter(voter=voter, post=post)
+        else:
+            myvote = None
+        # VoteModel.objects.create(post=post, voter=voter, vote=bool(vote_value), model_type='post')
+        # import pdb;
+        # pdb.set_trace()
+        # aya in usere object vote dare baraye in object feli
+        if myvote.exists():
+
+            prevvote = myvote.values_list('vote', flat=True).last()
+            # import pdb;
+            # pdb.set_trace()
+            if prevvote == newvote:
+                myvote.delete()
+
+            elif prevvote != newvote:
+                myvote.delete()
+                super(CustomModelManager, self).create(*args, **kwargs)
+        else:
+            super(CustomModelManager, self).create(*args, **kwargs)
+
+
+class VoteModel(models.Model):
+    voter = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='votes', unique=False)
+    vote = models.BooleanField()
+
+    post = models.ForeignKey(PostModel, null=True, on_delete=models.CASCADE)
+    answer = models.ForeignKey(AnswerModel, null=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(UserModel, null=True, on_delete=models.CASCADE)
+
+    objects = CustomModelManager()
+
+    #
+    # def get_absolute_url(self):
+    #     return reverse('mycontent:tag_detail',
+    #                    args=[self.slug])

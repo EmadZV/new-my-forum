@@ -14,6 +14,9 @@
   <a href="{% url 'myauth:logout' %}" class="split">LOG OUT</a>
   <a href="{% url "mycontent:newpost" %}" class="split">Create New Post</a>
   <a href="{% url "myauth:profile" %}" class="split">{{ user }}'s Profile</a>
+{#        {% if request.user.lastseen %}#}
+{#            <a>U+1f7e2</a>#}
+{#            {% endif %}#}
 
     {% if user.lastseen %}
         <a class="split">{{ user.username }}</a>

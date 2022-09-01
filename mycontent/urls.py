@@ -12,6 +12,11 @@ urlpatterns = [
     path('<int:year>/<int:month>/<int:day>/<slug:post>/', views.post_detail, name='post_detail'),
     # <str:new_answer>
     path('tag_list/', views.tag_list, name='tag_list'),
-    path('tag_detail/<slug:tag>/', views.tag_detail, name='tag_detail')
+    path('tag_detail/<slug:tag>/', views.tag_detail, name='tag_detail'),
 
+    path('post-status/<int:post_id>/<int:status_value>', views.post_status, name='post_status'),
+    # path('answer_status/<int:answer_id>/<int:answer_status_value>', views.answer_status, name='answer_status'),
+    path('post-vote/<int:post_id>/<int:vote_value>/', views.vote_post, name='vote_post'),
+    path('user-vote/<int:user_id>/<int:vote_value>/', views.vote_user, name='vote_user'),
+    path('answer-vote/<int:answer_id>/<int:vote_value>/', views.vote_answer, name='vote_answer'),
 ]

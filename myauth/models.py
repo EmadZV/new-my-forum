@@ -13,8 +13,8 @@ class UserModel(models.Model):
     age = models.PositiveIntegerField()
     gender = models.CharField(choices=GENDER, max_length=6)
     phone_number = PhoneNumberField(default='0')
-    last_seen = models.DateTimeField(default=None)
-    profile_image = models.ImageField(upload_to='forum/images')
+    last_seen = models.DateTimeField(default=None, null=True)
+    profile_image = models.ImageField(upload_to='forum/images', default=None)
     # rating = models.DecimalField(decimal_places=2, validators=[MinValueValidator(0), MaxValueValidator(5)], null=True)
     #
     # def ratingcalclulator(self):

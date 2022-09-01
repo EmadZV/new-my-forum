@@ -1,8 +1,9 @@
 from django.contrib import messages
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 # from myauth.forms import CompleteUserForm
 from myauth.forms import CompleteUserForm
+from myauth.models import UserModel
 from mycontent.models import AnswerModel, PostModel
 
 
@@ -42,3 +43,21 @@ def profile(request):
         'posts': post
     }
     return render(request, 'myauth/profile.html', context)
+
+
+def user_page(request, userpage):
+    user = get_object_or_404(UserModel, user__username=userpage)
+    visiter = get_object_or_404(UserModel, user=request.user)
+    if visiter == user:
+        editor_mode = True
+    # else:
+    #     follower=
+    #     following=
+    # user_posts=
+    # user_comments=
+    # user_answers=
+
+    # import pdb;
+    # pdb.set_trace()
+
+    pass

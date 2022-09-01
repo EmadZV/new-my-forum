@@ -3,7 +3,22 @@
 {% extends "base.html" %}
 {% block title %}My amazing forum{% endblock %}
 {% block content%}
-    <a>{{ post }}</a>
+    <a>{{ post }} by <a href='{% url 'myauth:user_page' post.user %}'>{{ post.user }}</a></a>
+    <br>
+    {% if request.user == post.user %}
+        {% if post.status == 'open' %}
+    <a href="{%  url 'mycontent:post_status' post.id 0 %}"><button>disable this post</button></a>
+        {% else %}
+    <a href="{%  url 'mycontent:post_status' post.id 1 %}"><button>enable this post</button></a>
+        {% endif %}
+    {% endif %}
+    <hr>
+    <a href="{%  url 'mycontent:vote_post' post.id 1 %}"><button>upvote this post</button></a>
+    <a href="{%  url 'mycontent:vote_post' post.id 0 %}"><button>downvote this post</button></a>
+{#        <a href="{%  url 'mycontent:vote_post' post.id 1 %}"><button name='postvote'>upvote this post</button></a>#}
+
+    <hr>
+    {{ postnet }}
     <br>
     <a> tags :
         {% for tag in posttag.all %}
@@ -14,7 +29,9 @@
     <br>
 
     <a> SimilarPOSTS </a>
-    {{ similarpost }}
+    {% for obj in similarpost %}
+        <a href="#">{{ obj.title }}</a>{% if not forloop.last %}, {% endif %}
+    {% endfor %}
     <br>
     <table>
     <tr>
@@ -31,6 +48,7 @@
      {% endfor %}
     </table>
 
+{% if post.status == 'open' %}
 
     <br>
     {% if new_comment %}
@@ -43,13 +61,46 @@
               <button name='comment' type="submit">ADD COMMENT</button>
         </form>
     {% endif %}
-    Answers
-    {% if answer.accepted == True %}
+
+{% endif %}
+
+
+
+{#            {% if request.user == post.user %}#}
+{#    {% for obj in answer %}#}
+{#        {% if obj.accepted == True  %}#}
+{#        <a href="{%  url 'mycontent:answer_status' answer.id 0 %}"><button>disable this answer</button></a>#}
+{#        {% else %}#}
+{#        <a href="{%  url 'mycontent:answer_status' answer.id 1 %}"><button>enable this answer</button></a>#}
+{#        {% endif %}#}
+{#    {% endfor %}#}
+{#            {% endif %}#}
+
+
+Answers
 
 {% for obj in answer %}
-        {{ obj.body }}
+        {%  if obj.accepted %}
+            {{ obj.get_net_answer }}
+            {{ obj.abody }}<br>
+
+{#    {% if request.user == post.user %}#}
+{#        <a href="{%  url 'mycontent:answer_status' post.id 0 %}"><button>disable this post</button></a>#}
+{#    {% if post.status == 'open' %}#}
+{#    <a href="{%  url 'mycontent:post_status' post.id 0 %}"><button>disable this post</button></a>#}
+{#        {% else %}#}
+{#    <a href="{%  url 'mycontent:post_status' post.id 1 %}"><button>enable this post</button></a>#}
+{#        {% endif %}#}
+
+            <hr>
+            <a href="{%  url 'mycontent:vote_answer' obj.id 1 %}"><button name='answervote'>upvote this answer</button></a>
+            <a href="{%  url 'mycontent:vote_answer' obj.id 0 %}"><button name='answervote'>downvote this answer</button></a>
+            <hr>
+        {%  endif %}
     {% endfor %}
-{% endif %}
+
+{% if post.status == 'open' %}
+
     <br>
     {% if new_answer %}
          <a>Your answer has been sent to verify</a>
@@ -62,5 +113,7 @@
         </form>
 
     {% endif %}
+
+{% endif %}
 
 {% endblock %}

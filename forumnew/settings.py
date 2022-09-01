@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
 ]
 
-# AUTH_USER_MODEL = 'myauth.models.UserModel'
+# AUTH_USER_MODEL = myauth.models.UserModel
 
 
 MIDDLEWARE = [
@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'myauth.middleware.NewMiddleware'
+    'myauth.middleware.NewMiddleware'
 ]
 
 ROOT_URLCONF = 'forumnew.urls'

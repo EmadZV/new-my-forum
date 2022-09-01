@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from mycontent.forms import PostCreateForm, CommentCreateForm, AnswerCreateForm, TagSearchForm
-from mycontent.models import PostModel, AnswerModel, CommentModel, TagModel
+from mycontent.models import PostModel, AnswerModel, CommentModel, TagModel, VoteModel
 from myauth.models import UserModel
+from django.db.models import Count
 
 User = get_user_model()
 
@@ -47,8 +48,11 @@ def post_detail(request, year, month, day, post):
     commentform = CommentCreateForm(request.POST)
     user = request.user
     posttag = post.tag.all()
-    similar_posts = [PostModel.objects.filter(tag=i) for i in posttag.values_list()]
-
+    similar_posts = post.get_similar_posts
+    post_netvotes = post.get_post_netvotes
+    answer_netvotes = []
+    for obj in answer:
+        answer_netvotes.append(obj.get_net_answer)
     if request.method == 'POST':
 
         if 'comment' in request.POST:
@@ -74,7 +78,9 @@ def post_detail(request, year, month, day, post):
                                                                   'answerform': answerform,
                                                                   'commentform': commentform,
                                                                   'posttag': posttag,
-                                                                  'similarpost': similar_posts})
+                                                                  'similarpost': similar_posts,
+                                                                  'postnet': post_netvotes,
+                                                                  'answernet': answer_netvotes})
 
 
 def tag_list(request):
@@ -95,3 +101,51 @@ def tag_detail(request, tag):
     post = PostModel.objects.filter(tag=obj)
     return render(request, 'mycontent/tag_detail.html', context={'obj': obj,
                                                                  'post': post})
+
+
+def vote_post(request, post_id, vote_value):
+    voter = get_object_or_404(UserModel, user=request.user)
+    post = get_object_or_404(PostModel, id=post_id)
+    VoteModel.objects.create(post=post, voter=voter, vote=bool(vote_value), answer=None)
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+def vote_user(request, user_id, vote_value):
+    pass
+
+
+def vote_answer(request, answer_id, vote_value):
+    voter = get_object_or_404(UserModel, user=request.user)
+    answer = get_object_or_404(AnswerModel, id=answer_id)
+    VoteModel.objects.create(answer=answer, voter=voter, vote=bool(vote_value), post=None)
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+def post_status(request, status_value, post_id):
+    post = PostModel.objects.get(id=post_id)
+
+    if status_value == 1:
+        post.unlock
+
+    else:
+        post.lock
+
+    return redirect('mycontent:post_list')
+
+# def answer_status(request, answer_status_value, answer_id):
+#     answer = AnswerModel.objects.get(id=answer_id)
+#     if answer_status_value == 1:
+#         answer.accepted = True
+#         answer.save()
+#     else:
+#         answer.accepted = False
+#         answer.save()
+#
+#     return redirect(request.META.get('HTTP_REFERER'))
+
+
+# ---------------------------------------------------- #
+#            1. add model property                     #
+#            2. separate views                         #
+#            3. deploy                                 #
+# ---------------------------------------------------- #
